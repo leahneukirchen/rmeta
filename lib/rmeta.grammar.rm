@@ -4,12 +4,13 @@ meta RMeta::Grammar <: RMeta::Compiler {
   main ::= <init> <token "meta"> <constant>:name (<token "<:"> <constant>)?:s <token "{"> <rule>* <token "}">
         => [@name = name; @superclass = s || "RMeta::Parser"; self];
   init ::= => [@rules = {}];
-  rule ::= <identifier>:id <identifier>*:args <token "::="> <expr>:e 
-           (<token "=>"> <bracketcode>)?:c <token ";"> 
-        => [@rules[id] = [args, c ? [:code, c, e] : e]];
+  rule ::= <identifier>:id <identifier>*:args <token "::="> <expr>:e <token ";"> 
+        => [@rules[id] = [args, e]];
   expr ::= <altexpr>;
-  altexpr ::= <seqexpr>:first (<token '|'> <seqexpr>)*:rest
+  altexpr ::= <codeexpr>:first (<token '|'> <codeexpr>)*:rest
            => [rest.empty? ? first : [:alt, first, *rest]];
+  codeexpr ::= <seqexpr>:e (<token "=>"> <bracketcode>)?:c
+            => [c ? [:code, c, e] : e];
   seqexpr ::= (<bindexpr>)*:e => [e.size == 1 ? e.first : [:seq, *e]];
   bindexpr ::= <notexpr>:e (<token ":"> <identifier>)?:id
            => [id ? [:bind, id, e] : e];
