@@ -1,4 +1,14 @@
 class RMeta
+  def self.load(file)
+    parse(File.read(file))
+  end
+
+  def self.parse(string)
+    require 'rmeta.grammar'
+    code = RMeta::Grammar.parse(string).to_code
+    Object.module_eval code
+  end
+
   class CharStream < String
     def head
       return nil  if empty?
@@ -129,6 +139,10 @@ class RMeta
     
     def _eof
       _not { _anything }
+    end
+
+    def apply(s)
+      __send__ s
     end
   end
 

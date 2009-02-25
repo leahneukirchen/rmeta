@@ -1,6 +1,6 @@
 require 'lib/rmeta'
 
-gram = File.read("lib/rmeta.rm")
+gram = File.read("lib/rmeta.grammar.rm")
 
 class OMeta < RMeta::Compiler
   def _ws
